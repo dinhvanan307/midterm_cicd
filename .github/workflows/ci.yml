@@ -2,7 +2,9 @@ name: Spring Boot CI/CD Pipeline
 
 on:
   push:
-    branches: [ "main" ]
+    # 1. ĐÃ SỬA: Đổi "main" thành "master"
+    # Lỗi của bạn là do push lên "master" nhưng file này chỉ "nghe" trên "main"
+    branches: [ "master" ]
 
 jobs:
   build-and-push-image:
@@ -24,7 +26,9 @@ jobs:
       - name: Đăng nhập Docker Hub
         uses: docker/login-action@v2
         with:
+          # Yêu cầu secret: DOCKERHUB_USERNAME (giá trị là "andinh307")
           username: ${{ secrets.DOCKERHUB_USERNAME }}
+          # Yêu cầu secret: DOCKERHUB_TOKEN (giá trị là token bạn tạo)
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build và Push image
@@ -46,13 +50,15 @@ jobs:
       - name: Checkout repo GitOps
         uses: actions/checkout@v3
         with:
-          # THAY TÊN GITHUB CỦA BẠN VÀO ĐÂY
+          # 2. ĐÃ SỬA: Điền tên user GitHub và tên repo GITOPS
+          # (Hãy đảm bảo "midterm-gitops" là tên repo chứa file .yaml của bạn)
           repository: dinhvanan307/midterm-gitops
+          # Yêu cầu secret: PAT (token ghp_... bạn đã tạo)
           token: ${{ secrets.PAT }} 
 
       - name: Cập nhật image tag trong deployment.yaml
         run: |
-          # THAY TÊN DOCKERHUB CỦA BẠN VÀO ĐÂY
+          # Dùng secret "DOCKERHUB_USERNAME" (phải là "andinh307")
           sed -i 's|image:.*|image: ${{ secrets.DOCKERHUB_USERNAME }}/midterm:${{ github.sha }}|g' deployment.yaml
           cat deployment.yaml
 
