@@ -2,7 +2,8 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ "main" ]
+    # THAY ĐỔI 1: Đổi thành "master" cho giống với repo của bạn
+    branches: [ "master" ]
 
 env:
   REGISTRY: ghcr.io
@@ -23,10 +24,12 @@ jobs:
       - name: Checkout code (Repo App)
         uses: actions/checkout@v4
 
-      # Bước này sẽ tự động lấy tên repo của bạn (dinhvanan307/midterm-gitops)
+      # THAY ĐỔI 2: Sửa lại comment cho rõ ràng
+      # Bước này sẽ tự động lấy tên repo app (dinhvanan307/midterm_cicd)
       - name: Set lower-case image name
         id: set-names
         run: |
+          # Biến này sẽ là 'dinhvanan307/midterm_cicd'
           LOWER_NAME=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
           echo "IMAGE_NAME_LOWER=$LOWER_NAME" >> $GITHUB_ENV
           echo "lower=$LOWER_NAME" >> $GITHUB_OUTPUT
@@ -42,7 +45,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          # Dùng tên repo của bạn đã được đổi thành chữ thường
+          # Image sẽ là ghcr.io/dinhvanan307/midterm_cicd
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOWER }}
           tags: |
             type=sha,prefix=,format=short
@@ -64,19 +67,20 @@ jobs:
       - name: Checkout code (Repo Manifest)
         uses: actions/checkout@v4
         with:
-          # --- ĐÂY LÀ DÒNG BẠN CẦN THAY THẾ ---
-          # Thay bằng tên repo chứa file manifest (deployment.yaml) của bạn
+          # Dòng này đã đúng (trỏ đến repo manifest 'midterm-gitops')
           repository: dinhvanan307/midterm-gitops
           token: ${{ secrets.GIT_PAT }} 
 
       - name: Get new image tag and name
         run: |
           echo "NEW_TAG=${{ needs.build-and-push.outputs.image_tag }}" >> $GITHUB_ENV
+          # Biến này sẽ là 'dinhvanan307/midterm_cicd'
           echo "IMAGE_NAME_LOWER=${{ needs.build-and-push.outputs.image_name_lower }}" >> $GITHUB_ENV
 
       - name: Update image tag in deployment.yaml
         run: |
-          # Dùng 'sed' để cập nhật image, nó sẽ tự động dùng tên image đúng
+          # Lệnh 'sed' này sẽ cập nhật image thành:
+          # image: ghcr.io/dinhvanan307/midterm_cicd:new_tag
           sed -i "s|image: .*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOWER }}:${{ env.NEW_TAG }}|g" deployment.yaml
           cat deployment.yaml
 
