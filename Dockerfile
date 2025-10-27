@@ -3,6 +3,10 @@ FROM eclipse-temurin:17-jdk-jammy AS build
 WORKDIR /app
 COPY .mvn/ .mvn
 COPY mvnw pom.xml ./
+
+# --- SỬA LỖI: Cấp quyền thực thi cho mvnw ---
+RUN chmod +x ./mvnw
+
 RUN ./mvnw dependency:resolve
 COPY src ./src
 RUN ./mvnw package -DskipTests
