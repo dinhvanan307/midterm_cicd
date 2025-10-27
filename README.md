@@ -61,6 +61,20 @@ Destination
 
 <img width="1905" height="954" alt="image" src="https://github.com/user-attachments/assets/bee4968f-ad0c-4ee8-98d8-3341afe5582f" />
 
+Update và commit trên vs code sẽ hiện trên workflow trong tab Actions
+
+<img width="1918" height="954" alt="image" src="https://github.com/user-attachments/assets/be9c8020-842b-4f33-93c1-462093511662" />
+
+Có 2 jobs là build-and-push và update-manifest:
+
+<img width="1919" height="831" alt="image" src="https://github.com/user-attachments/assets/5e374b17-ccdd-431a-8475-8b273c2bc373" />
+
+Giao diện ArgoCD UI sau khi phát hiện thay đổi:
+
+<img width="1919" height="962" alt="image" src="https://github.com/user-attachments/assets/835b205e-9d1a-47cd-ab6e-4bb5d5e09fa0" />
+
+
+
 
 
 
